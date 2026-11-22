@@ -1,6 +1,7 @@
 # StrataTurbo 最適化完了レポート（ターボ不使用・品質維持・限界最適化）
 
 - **実施日**: 2026-11-22
+- **対象バージョン**: Strata `v0.2.19` (`build 0.1.65` / `rtx4080-turbo` ネイティブビルド)
 - **対象サーバー**: `gwol-target` (`192.168.10.20` / `ILeDEi-R779`)
 - **ハードウェア**: NVIDIA GeForce RTX 4080 16GB (`sm_89`) / Intel Core i9-14900KF (`no_turbo=1` 3.2 GHz 固定維持) / 64 GiB DDR5-4000
 - **対象モデル**: `Qwen3.8-Flash-Next-UD-IQ3_XXS` + `DFlash2 (q4_0-selq4)`
@@ -69,3 +70,16 @@ C++ コンパイル＆実行テスト（4問）、Python 単体テスト（4問�
   ```bash
   sudo bash /home/shinsuke/StrataTurbo/scripts/apply_os_tuning.sh
   ```
+
+---
+
+## 5. Strata `v0.2.19` (`engine 0.1.65`) アップデート検証結果
+
+本家 `Niko1221/Strata` `v0.2.19` では `nv_defaults.cpp` に Ada Lovelace (`sm_89`) のネイティブ最適化テーブル（`STRATA_DEQUANT_SIDE=1`, `STRATA_QFUSE=1`, `STRATA_LFUSE=1`, `STRATA_PLE_COMPACT=1`, `STRATA_PLE_COPY_STREAM=1`, `STRATA_PF_FUSED_KQ=1` 等）が正式追加されました。Control (`0.1.65`) および RTX 4080 専用ビルド (`engine 0.1.65`) へ更新し、動作確認と計測を実施しました。
+
+| 条件 | Slots | `decode_code` | `decode_ja` | `prefill_mid` (D / P) | `prefill_long` (D / P) | 16問品質テスト |
+|---|---:|---:|---:|---:|---:|---|
+| `v0.2.18` (`final_max_opt`, `n=5`) | 4,770 | 136.70 | 113.10 | 103.10 / 1,545.1 | 103.60 / 3,438.3 | 15/16 (93.8%) |
+| **`v0.2.19` (`v0219_confirm`, `n=3`)** | **4,654** | **125.90** | **109.80** | **101.10 / 1,542.5** | **105.50 / 3,449.0** | **16/16 (100.0%)** |
+
+- `v0.2.19` では新バッファ確保によりキャッシュスロットが 4,770 → 4,654 となった一方、16問厳密品質テストは **16/16 (100.0%)**（質問時の中央値 Decode **143.2 tok/s**）を達成し、長文 Prefill も **3,449.0 tok/s** へ向上。サービスは `active` / `/health` `loaded: true` で正常稼働中です。

@@ -1,6 +1,6 @@
 # StrataTurbo
 
-NVIDIA GeForce **RTX 4080 16GB (`sm_89`)** + **Intel Core i9-14900KF**（`no_turbo=1` / 3.2 GHz 固定）環境向けに、[Niko1221/Strata](https://github.com/Niko1221/Strata) (`0.2.18` / engine `0.1.64`) 上で **Qwen3.8-Flash-Next-UD-IQ3_XXS** を限界まで高速化するための専用ビルド・最適化設定・ベンチマーク＆品質検証キットです。
+NVIDIA GeForce **RTX 4080 16GB (`sm_89`)** + **Intel Core i9-14900KF**（`no_turbo=1` / 3.2 GHz 固定）環境向けに、[Niko1221/Strata](https://github.com/Niko1221/Strata) (`v0.2.19` / engine `0.1.65`) 上で **Qwen3.8-Flash-Next-UD-IQ3_XXS** を限界まで高速化するための専用ビルド・最適化設定・ベンチマーク＆品質検証キットです。
 
 ---
 
