@@ -1,0 +1,271 @@
+{
+  "tag": "p3_rtx4080_w23",
+  "timestamp": "2026-11-22T17:45:42+0900",
+  "n": 2,
+  "startup": {
+    "dflash2_max_window": 6,
+    "expert_cache_slots": 4738,
+    "expert_cache_gib": 9.03,
+    "pool_workers": 23,
+    "pool_cpus": "2,4,6,8,10,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,"
+  },
+  "gpu_before": {
+    "vram_used_mib": 15759.0,
+    "vram_free_mib": 185.0,
+    "gpu_temp_c": 34.0,
+    "power_w": 49.06,
+    "clock_gr_mhz": 2850.0,
+    "clock_mem_mhz": 10801.0
+  },
+  "gpu_after": {
+    "vram_used_mib": 15853.0,
+    "vram_free_mib": 91.0,
+    "gpu_temp_c": 50.0,
+    "power_w": 139.28,
+    "clock_gr_mhz": 2835.0,
+    "clock_mem_mhz": 10801.0
+  },
+  "summary": {
+    "decode_code": {
+      "prefill_tok_s_median": 140.9,
+      "decode_tok_s_median": 94.4,
+      "wall_s_median": 6.072,
+      "expert_hit_pct_median": 72.4,
+      "pcie_routed_pct_median": 2.0,
+      "draft_acc_pct_median": 87.47
+    },
+    "decode_ja": {
+      "prefill_tok_s_median": 180.95,
+      "decode_tok_s_median": 85.3,
+      "wall_s_median": 6.636,
+      "expert_hit_pct_median": 72.95,
+      "pcie_routed_pct_median": 1.8,
+      "draft_acc_pct_median": 78.7
+    },
+    "prefill_mid": {
+      "prefill_tok_s_median": 1532.1,
+      "decode_tok_s_median": 77.65,
+      "wall_s_median": 6.072,
+      "expert_hit_pct_median": 64.25,
+      "pcie_routed_pct_median": 2.7,
+      "draft_acc_pct_median": 84.9
+    },
+    "prefill_long": {
+      "prefill_tok_s_median": 3293.4,
+      "decode_tok_s_median": 76.75,
+      "wall_s_median": 4.637,
+      "expert_hit_pct_median": 67.55,
+      "pcie_routed_pct_median": 2.3,
+      "draft_acc_pct_median": 81.13
+    }
+  },
+  "quality": {
+    "all_pass": true,
+    "checks": [
+      {
+        "name": "json_math",
+        "pass": true,
+        "output": "{\"status\": \"ok\", \"sum\": 3973}"
+      },
+      {
+        "name": "ja_coherence",
+        "pass": true,
+        "output": "東京は約1,400万人の人口を抱える日本最大の都市圏である一方、大阪は約880万人の人口を擁する西日本最大の都市圏です。\n両者の人口規模には約500万人の差があり、東京が圧倒的に大きな都市であることがわかります。"
+      }
+    ]
+  },
+  "raw": {
+    "decode_code": [
+      {
+        "wall_s": 6.4,
+        "prompt_n": 87,
+        "cache_n": 0,
+        "predicted_n": 512,
+        "prompt_ms": 713.0,
+        "predicted_ms": 5679.4,
+        "prefill_tok_s": 122.0,
+        "decode_tok_s": 90.2,
+        "draft_n": 342,
+        "draft_accepted": 300,
+        "draft_acc_pct": 87.72,
+        "finish_reason": "length",
+        "content_preview": "```cpp\n#pragma once\n\n#include <atomic>\n#include <cstddef>\n#include <memory>\n#include <optional>\n#include <type_traits>\n#",
+        "expert_hit_pct": 71.4,
+        "expert_hits": 185933,
+        "expert_lookups": 260377,
+        "pcie_extra": 5543,
+        "pcie_routed_pct": 2.1,
+        "total_routed": 265920,
+        "kv_vram_hit_pct": 99.69,
+        "kv_ram_read_mib": 7.3
+      },
+      {
+        "wall_s": 5.744,
+        "prompt_n": 87,
+        "cache_n": 0,
+        "predicted_n": 512,
+        "prompt_ms": 544.6,
+        "predicted_ms": 5193.8,
+        "prefill_tok_s": 159.8,
+        "decode_tok_s": 98.6,
+        "draft_n": 344,
+        "draft_accepted": 300,
+        "draft_acc_pct": 87.21,
+        "finish_reason": "length",
+        "content_preview": "```cpp\n#pragma once\n\n#include <atomic>\n#include <cstddef>\n#include <memory>\n#include <optional>\n#include <type_traits>\n#",
+        "expert_hit_pct": 73.4,
+        "expert_hits": 192228,
+        "expert_lookups": 261798,
+        "pcie_extra": 5082,
+        "pcie_routed_pct": 1.9,
+        "total_routed": 266880,
+        "kv_vram_hit_pct": 99.69,
+        "kv_ram_read_mib": 7.3
+      }
+    ],
+    "decode_ja": [
+      {
+        "wall_s": 6.78,
+        "prompt_n": 113,
+        "cache_n": 0,
+        "predicted_n": 512,
+        "prompt_ms": 630.8,
+        "predicted_ms": 6142.0,
+        "prefill_tok_s": 179.1,
+        "decode_tok_s": 83.4,
+        "draft_n": 340,
+        "draft_accepted": 250,
+        "draft_acc_pct": 73.53,
+        "finish_reason": "length",
+        "content_preview": "Mixture-of-Experts (MoE) モデルの推論において、GPU VRAM、PCIe バス、CPU メモリ（および場合によってはNVMe SSD）を組み合わせた「3層メモリ階層構造」は、巨大なパラメータ数を抱えるMoEモデルを",
+        "expert_hit_pct": 74.3,
+        "expert_hits": 210899,
+        "expert_lookups": 284012,
+        "pcie_extra": 4948,
+        "pcie_routed_pct": 1.7,
+        "total_routed": 288960,
+        "kv_vram_hit_pct": 99.72,
+        "kv_ram_read_mib": 7.5
+      },
+      {
+        "wall_s": 6.493,
+        "prompt_n": 113,
+        "cache_n": 0,
+        "predicted_n": 512,
+        "prompt_ms": 618.2,
+        "predicted_ms": 5868.8,
+        "prefill_tok_s": 182.8,
+        "decode_tok_s": 87.2,
+        "draft_n": 310,
+        "draft_accepted": 260,
+        "draft_acc_pct": 83.87,
+        "finish_reason": "length",
+        "content_preview": "Mixture-of-Experts (MoE) モデルの推論において、GPU VRAM、PCIe バス、CPU メモリという3層のメモリ階層がどのように協調動作するかは、現代のLLM（大規模言語モデル）サービングにおける最も重要な最適化課",
+        "expert_hit_pct": 71.6,
+        "expert_hits": 189463,
+        "expert_lookups": 264673,
+        "pcie_extra": 5087,
+        "pcie_routed_pct": 1.9,
+        "total_routed": 269760,
+        "kv_vram_hit_pct": 99.7,
+        "kv_ram_read_mib": 7.6
+      }
+    ],
+    "prefill_mid": [
+      {
+        "wall_s": 6.143,
+        "prompt_n": 4234,
+        "cache_n": 0,
+        "predicted_n": 256,
+        "prompt_ms": 2776.3,
+        "predicted_ms": 3355.6,
+        "prefill_tok_s": 1525.1,
+        "decode_tok_s": 76.3,
+        "draft_n": 150,
+        "draft_accepted": 130,
+        "draft_acc_pct": 86.67,
+        "finish_reason": "length",
+        "content_preview": "Based on a detailed review of the provided code blocks, it is important to first clarify a critical observation: **All 1",
+        "expert_hit_pct": 64.1,
+        "expert_hits": 82565,
+        "expert_lookups": 128860,
+        "pcie_extra": 3620,
+        "pcie_routed_pct": 2.7,
+        "total_routed": 132480,
+        "kv_vram_hit_pct": 99.23,
+        "kv_ram_read_mib": 53.7
+      },
+      {
+        "wall_s": 6.001,
+        "prompt_n": 4234,
+        "cache_n": 0,
+        "predicted_n": 256,
+        "prompt_ms": 2750.9,
+        "predicted_ms": 3240.4,
+        "prefill_tok_s": 1539.1,
+        "decode_tok_s": 79.0,
+        "draft_n": 160,
+        "draft_accepted": 133,
+        "draft_acc_pct": 83.12,
+        "finish_reason": "length",
+        "content_preview": "Based on a detailed review of the provided code blocks, it is important to first clarify a critical observation: **All 1",
+        "expert_hit_pct": 64.4,
+        "expert_hits": 85117,
+        "expert_lookups": 132168,
+        "pcie_extra": 3672,
+        "pcie_routed_pct": 2.7,
+        "total_routed": 135840,
+        "kv_vram_hit_pct": 99.26,
+        "kv_ram_read_mib": 53.4
+      }
+    ],
+    "prefill_long": [
+      {
+        "wall_s": 4.461,
+        "prompt_n": 13066,
+        "cache_n": 0,
+        "predicted_n": 36,
+        "prompt_ms": 3970.7,
+        "predicted_ms": 471.1,
+        "prefill_tok_s": 3290.6,
+        "decode_tok_s": 76.4,
+        "draft_n": 19,
+        "draft_accepted": 16,
+        "draft_acc_pct": 84.21,
+        "finish_reason": "stop",
+        "content_preview": "TARGET_FOUND_OK\nBlock 42 contains no bug; the code is identical to all other blocks and implements a correct single-prod",
+        "expert_hit_pct": 68.2,
+        "expert_hits": 12496,
+        "expert_lookups": 18325,
+        "pcie_extra": 395,
+        "pcie_routed_pct": 2.1,
+        "total_routed": 18720,
+        "kv_vram_hit_pct": 93.24,
+        "kv_ram_read_mib": 75.5
+      },
+      {
+        "wall_s": 4.813,
+        "prompt_n": 13066,
+        "cache_n": 0,
+        "predicted_n": 64,
+        "prompt_ms": 3964.0,
+        "predicted_ms": 830.3,
+        "prefill_tok_s": 3296.2,
+        "decode_tok_s": 77.1,
+        "draft_n": 41,
+        "draft_accepted": 32,
+        "draft_acc_pct": 78.05,
+        "finish_reason": "length",
+        "content_preview": "TARGET_FOUND_OK\nBlock 42 uses `std::memory_order_relaxed` for the store operation in `push` (`head_.store(next, std::mem",
+        "expert_hit_pct": 66.9,
+        "expert_hits": 22856,
+        "expert_lookups": 34174,
+        "pcie_extra": 866,
+        "pcie_routed_pct": 2.5,
+        "total_routed": 35040,
+        "kv_vram_hit_pct": 95.23,
+        "kv_ram_read_mib": 93.5
+      }
+    ]
+  }
+}

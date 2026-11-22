@@ -1,0 +1,67 @@
+{
+  "exe": "component:strata-engine",
+  "args": [
+    "--pack",
+    "/home/shinsuke/strata-data/models/packs/ud-iq3_xxs-v31",
+    "--native",
+    "/home/shinsuke/strata-data/models/unsloth-v31/UD-IQ3_XXS/Qwen3.8-Flash-Next-UD-IQ3_XXS-00001-of-00004.gguf",
+    "--ple-gguf",
+    "/home/shinsuke/strata-data/models/unsloth-v31/UD-IQ3_XXS/Qwen3.8-Flash-Next-UD-IQ3_XXS-00004-of-00004.gguf",
+    "--expert-profile",
+    "/home/shinsuke/strata-data/models/expert-profile.bin",
+    "--expert-cache",
+    "auto",
+    "--prefill",
+    "auto",
+    "--spec",
+    "4",
+    "--max-context",
+    "262144",
+    "--kv",
+    "int8",
+    "--kv-resident",
+    "32768",
+    "--vram-reserve-mib",
+    "2048",
+    "--pool-workers",
+    "15",
+    "--vision"
+  ],
+  "cwd": "/home/shinsuke/strata-data/config",
+  "tokenizer": "/home/shinsuke/strata-data/models/packs/ud-iq3_xxs-v31/tokenizer",
+  "model_name": "qwen3.8-flash-next-ud-iq3_xxs",
+  "log": "/home/shinsuke/.local/state/strata/engine.log",
+  "lib_dirs": [
+    "/usr/local/cuda-12.8/bin",
+    "/usr/local/cuda-12.8/lib64"
+  ],
+  "port": 18080,
+  "gpu": 0,
+  "gpus_asked": true,
+  "host": "127.0.0.1",
+  "open_browser": false,
+  "parallel": 1,
+  "api_key": "<SET_YOUR_STRATA_API_KEY>",
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "top_k": 20,
+    "presence_penalty": 0
+  },
+  "reasoning_effort": "medium",
+  "user_args": [
+    "--vram-reserve-mib",
+    "2048",
+    "--spec",
+    "4"
+  ],
+  "vision": {
+    "exe": "/home/shinsuke/.local/share/strata/components/engine/0.1.59-linux-x86_64-cuda-cuda13/strata-vision",
+    "mmproj": "/home/shinsuke/strata-data/models/unsloth-v31/UD-IQ3_XXS/mmproj-Qwen3.8-Flash-Next-BF16.gguf",
+    "model": "/home/shinsuke/strata-data/models/unsloth-v31/UD-IQ3_XXS/Qwen3.8-Flash-Next-UD-IQ3_XXS-00001-of-00004.gguf",
+    "gpu": true,
+    "max_tokens": 1024
+  },
+  "backend": "cuda",
+  "drafting": "auto"
+}

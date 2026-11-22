@@ -1,0 +1,18 @@
+[Unit]
+Description=Strata API
+
+[Service]
+Type=simple
+WorkingDirectory=/home/shinsuke/strata-data/config
+Environment=PYTHONUNBUFFERED=1
+Environment=STRATA_ENGINE_BACKEND=cuda
+UMask=0077
+ExecStart=/home/shinsuke/.local/bin/strata serve --profile /home/shinsuke/strata-data/config/strata-ud-iq3_xxs.json --host 127.0.0.1 --port 18080
+Restart=no
+KillMode=control-group
+TimeoutStopSec=120
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
