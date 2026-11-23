@@ -19,6 +19,9 @@ NVIDIA GeForce **RTX 4080 16GB (`sm_89`)** + **Intel Core i9-14900KF**（`no_tur
 
 詳細な測定データ・各施策の A/B 比較表は [docs/report.md](docs/report.md) を参照してください。
 
+> **Strata v0.2.20 最新チューニング結果 (`v0220_opt_best`, `--vram-reserve-mib 96` + `STRATA_CACHE_PIN_FRAC=0`)**:
+> `decode_code` **129.70 tok/s** (最大 145.7), `decode_ja` **109.40 tok/s**, `prefill_mid` **101.90 / 1644.30 tok/s**, `prefill_long` **109.20 / 3438.40 tok/s**, Expert Cache **4,704 slots (8.97 GiB)**, 17.6K ストレス **PASS** (prefill 3583.5 tok/s), 16問品質テスト **15/16 PASS** (`median_dec=146.6 tok/s`)。
+
 ---
 
 ## 主な最適化ポイント

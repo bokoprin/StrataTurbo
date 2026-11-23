@@ -111,3 +111,30 @@ C++ コンパイル＆実行テスト（4問）、Python 単体テスト（4問�
 2. **`#4870` 適応キャッシュ / ピン留め率 (`STRATA_CACHE_PIN_FRAC`)**: デフォルトで上位 25%（1,163 スロット）を追い出し禁止にし、スワップ頻度も倍増（4→2）しているため、短文 Decode がわずかに落ちた要因になっていないか `STRATA_CACHE_PIN_FRAC=0` 等で検証する余地あり。
 3. **新設 Tensor Core モード (`STRATA_HC_Q8_TC=2` / `STRATA_HC_Q8_BF16TC=1`)**: `gr_down_q8_tc_kernel` 併用時の A/B 比較余地あり。
 4. **CPU ワーカー数再検証（`--pool-workers 23` vs `15`/`19`）**: `v0.2.20` で CPU `IQ3_XXS` カーネルが高速化されたため、最適ワーカー数が変わった可能性あり。
+
+
+### 6.4 v0.2.20 高速化チューニング（`opt1`〜`opt6` スクリーニング & `v0220_opt_best`）
+
+セクション 6.3 の4項目について、`v0.2.20` (`build/rtx4080/strata`) 上で `n=2` の A/B スクリーニングを実施しました。
+
+| Tag | 変更内容（ベースライン比） | `decode_code` | `decode_ja` | `prefill_mid` (dec / pref) | `prefill_long` (dec / pref) | Expert Slots | 備考 |
+| :--- | :--- | ---: | ---: | ---: | ---: | ---: | :--- |
+| `v0220_fixed_bench` (`n=3`) | ベースライン (`reserve=192`, `workers=23`) | 121.60 | 105.60 | 101.90 / 1632.10 | 101.60 / 3420.90 | 4654 (8.87 GiB) | 基準 |
+| `opt1_res96` (`n=2`) | `--vram-reserve-mib 96` | 119.65 | 106.65 | 100.70 / 1624.90 | **107.15 / 3442.20** | **4704 (8.97 GiB)** | +50 slots、長文改善 |
+| `opt2_nopin` (`n=2`) | `STRATA_CACHE_PIN_FRAC=0` | **126.05** | **108.05** | **102.45 / 1628.75** | 97.75 / 3422.45 | 4654 (8.87 GiB) | **短文 decode +3.7%** |
+| `opt3_hctc2` (`n=2`) | `STRATA_HC_Q8_TC=2` | 116.40 | 108.15 | 105.90 / 1628.40 | 103.25 / 3421.15 | 4654 (8.87 GiB) | `decode_code` 低下 |
+| `opt4_hctc0_bf16` (`n=2`) | `STRATA_HC_Q8_TC=0` | - | - | - | - | - | HTTP 503 で不採用 |
+| `opt5_w15` (`n=2`) | `--pool-workers 15` | 115.40 | 101.45 | 100.00 / 1600.45 | 100.20 / 3410.50 | 4654 (8.87 GiB) | 23 workers より低下 |
+| `opt6_w19` (`n=2`) | `--pool-workers 19` | 117.80 | 107.40 | 100.25 / 1606.70 | 106.20 / 3418.15 | 4654 (8.87 GiB) | `decode_code` 低下 |
+
+効果の高かった **`--vram-reserve-mib 96`**（`opt1_res96`）と **`STRATA_CACHE_PIN_FRAC=0`**（`opt2_nopin`）を組み合わせ、`--pool-workers 23` を維持した **`v0220_opt_best`** で本計測（`n=5`）・17.6K ストレステスト・16問品質テストを実施しました。
+
+- **本計測 `v0220_opt_best` (`n=5` 中央値)**:
+  - `decode_code`: **129.70 tok/s**（`121.60` → `+6.7%`、iter 5 最大 `145.7 tok/s`）
+  - `decode_ja`: **109.40 tok/s**（`105.60` → `+3.6%`）
+  - `prefill_mid`: decode **101.90 tok/s** / prefill **1644.30 tok/s**
+  - `prefill_long`: decode **109.20 tok/s**（`101.60` → `+7.5%`） / prefill **3438.40 tok/s**
+  - `expert_cache_slots`: **4704 (8.97 GiB)**、Quality Gate: **PASS**
+- **17.6K 長文ストレステスト**: `STRESS_OK`（`prompt_n=16731`, `predicted_n=128`, `elapsed=5.99s`, `prefill=3583.50 tok/s`, `decode=99.30 tok/s`, VRAM 残り `89 MiB` / OOM なし）
+- **16問品質評価 (`v0220_opt_qual`)**: **15/16 PASS (93.8%)**, `median_dec=146.6 tok/s`（`B4_py_expr` のみ Python 負数除算丸め差異）
+- **温度（`no_turbo=1` 維持）**: CPU `x86_pkg_temp=50.0°C`, GPU `55°C`

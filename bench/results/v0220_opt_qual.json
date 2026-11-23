@@ -1,0 +1,186 @@
+{
+  "tag": "v0220_opt_qual",
+  "timestamp": "2026-11-23T15:04:33+0900",
+  "passed": 15,
+  "total": 16,
+  "pass_rate_pct": 93.8,
+  "median_decode_tok_s": 146.6,
+  "results": [
+    {
+      "id": "A1_cpp_lru",
+      "category": "cpp",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 141.9,
+      "prefill_tok_s": 166.6,
+      "predicted_n": 367,
+      "output_hash": "ee6898310e8e",
+      "output": "```cpp\n#include <unordered_map>\n#include <list>\n#include <utility>\n\nclass LRUCache {\nprivate:\n    int capacity;\n    std::list<std::pair<int, int>> cacheList; // front = most recently used, back = least recently used\n    std::unordered_map<int, std::list<std::pair<int, int>>::iterator> cacheMap;\n\npublic:\n    LRUCache(int capacity) : capacity(capacity) {}\n\n    int get(int key) {\n        auto it = cacheMap.find(key);\n        if (it == cacheMap.end()) {\n            return -1;\n        }\n        // Move the accessed item to the front (most recently used)\n        cacheList.splice(cacheList.begin(), cacheList, it->second);\n        return it->second->second;\n    }\n\n    void put(int key, int value) {\n        auto it = cacheMap.find(key);\n        if (it != cacheMap.end()) {\n            // Key exists: update value and move to front\n            it->second->second = value;\n            cacheList.splice(cacheList.begin(), cacheList, it->second);\n        } else {\n            // Key does not exist\n            if (static_cast<int>(cacheMap.size()) == capacity) {\n                // Evict the least recently used item (back of the list)\n                auto lruIt = cacheList.back();\n                cacheMap.erase(lruIt.first);\n                cacheList.pop_back();\n            }\n            // Insert new item at the front\n            cacheList.push_front({key, value});\n            cacheMap[key] = cacheList.begin();\n        }\n    }\n};\n```"
+    },
+    {
+      "id": "A2_cpp_intervals",
+      "category": "cpp",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 145.0,
+      "prefill_tok_s": 164.8,
+      "predicted_n": 244,
+      "output_hash": "fee39ef8314d",
+      "output": "```cpp\n#include <vector>\n#include <algorithm>\n#include <utility>\n\nusing namespace std;\n\nvector<pair<int,int>> merge_intervals(vector<pair<int,int>> intervals) {\n    if (intervals.empty()) {\n        return {};\n    }\n    \n    // Sort intervals by start time\n    sort(intervals.begin(), intervals.end(), [](const pair<int,int>& a, const pair<int,int>& b) {\n        return a.first < b.first;\n    });\n    \n    vector<pair<int,int>> merged;\n    merged.push_back(intervals[0]);\n    \n    for (size_t i = 1; i < intervals.size(); ++i) {\n        // If current interval overlaps or touches the last merged interval\n        if (intervals[i].first <= merged.back().second) {\n            // Merge by updating the end of the last merged interval\n            merged.back().second = max(merged.back().second, intervals[i].second);\n        } else {\n            // No overlap, add as new interval\n            merged.push_back(intervals[i]);\n        }\n    }\n    \n    return merged;\n}\n```"
+    },
+    {
+      "id": "A3_cpp_queue",
+      "category": "cpp",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 161.1,
+      "prefill_tok_s": 165.7,
+      "predicted_n": 222,
+      "output_hash": "ebf55d97a0cf",
+      "output": "```cpp\n#include <queue>\n#include <mutex>\n#include <condition_variable>\n#include <cstddef>\n\nclass BoundedQueue {\npublic:\n    explicit BoundedQueue(size_t cap) : capacity_(cap) {}\n\n    bool try_push(int v) {\n        std::lock_guard<std::mutex> lock(mutex_);\n        if (queue_.size() >= capacity_) {\n            return false;\n        }\n        queue_.push(v);\n        cv_.notify_one();\n        return true;\n    }\n\n    bool try_pop(int& out) {\n        std::lock_guard<std::mutex> lock(mutex_);\n        if (queue_.empty()) {\n            return false;\n        }\n        out = queue_.front();\n        queue_.pop();\n        cv_.notify_one();\n        return true;\n    }\n\nprivate:\n    std::queue<int> queue_;\n    std::mutex mutex_;\n    std::condition_variable cv_;\n    size_t capacity_;\n};\n```"
+    },
+    {
+      "id": "A4_cpp_parse",
+      "category": "cpp",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 152.5,
+      "prefill_tok_s": 164.6,
+      "predicted_n": 265,
+      "output_hash": "60cc2bc55c09",
+      "output": "```cpp\n#include <string>\n#include <vector>\n#include <sstream>\n#include <algorithm>\n#include <cctype>\n\nvector<int> parse_csv_ints(const string& s) {\n    vector<int> result;\n    stringstream ss(s);\n    string segment;\n    \n    while (getline(ss, segment, ',')) {\n        // Trim leading whitespace\n        size_t start = segment.find_first_not_of(\" \\t\\r\\n\");\n        if (start == string::npos) {\n            // Empty or whitespace-only segment, skip\n            continue;\n        }\n        // Trim trailing whitespace\n        size_t end = segment.find_last_not_of(\" \\t\\r\\n\");\n        string trimmed = segment.substr(start, end - start + 1);\n        \n        // Try to parse as integer\n        try {\n            size_t pos;\n            int val = stoi(trimmed, &pos);\n            // Ensure the entire trimmed string was consumed (no extra characters)\n            if (pos == trimmed.size()) {\n                result.push_back(val);\n            }\n        } catch (...) {\n            // Not a valid integer, skip\n            continue;\n        }\n    }\n    \n    return result;\n}\n```"
+    },
+    {
+      "id": "B1_py_dijkstra",
+      "category": "python",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 150.0,
+      "prefill_tok_s": 175.1,
+      "predicted_n": 205,
+      "output_hash": "764ebea7e990",
+      "output": "```python\nimport heapq\n\ndef shortest_path(n, edges, src, dst):\n    # Build adjacency list\n    graph = [[] for _ in range(n)]\n    for u, v, w in edges:\n        graph[u].append((v, w))\n    \n    # Dijkstra's algorithm\n    dist = [float('inf')] * n\n    dist[src] = 0\n    heap = [(0, src)]\n    \n    while heap:\n        d, u = heapq.heappop(heap)\n        if d > dist[u]:\n            continue\n        if u == dst:\n            return d\n        for v, w in graph[u]:\n            new_dist = d + w\n            if new_dist < dist[v]:\n                dist[v] = new_dist\n                heapq.heappush(heap, (new_dist, v))\n    \n    return -1 if dist[dst] == float('inf') else dist[dst]\n```"
+    },
+    {
+      "id": "B2_py_toposort",
+      "category": "python",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 162.5,
+      "prefill_tok_s": 155.0,
+      "predicted_n": 203,
+      "output_hash": "0ce31f70fabe",
+      "output": "```python\ndef topo_order(n, edges):\n    from collections import deque\n    \n    # Build adjacency list and in-degree array\n    adj = [[] for _ in range(n)]\n    in_degree = [0] * n\n    \n    for u, v in edges:\n        adj[u].append(v)\n        in_degree[v] += 1\n    \n    # Initialize queue with nodes having in-degree 0\n    queue = deque()\n    for i in range(n):\n        if in_degree[i] == 0:\n            queue.append(i)\n    \n    result = []\n    while queue:\n        node = queue.popleft()\n        result.append(node)\n        for neighbor in adj[node]:\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                queue.append(neighbor)\n    \n    if len(result) == n:\n        return result\n    else:\n        return None\n```"
+    },
+    {
+      "id": "B3_py_wildcard",
+      "category": "python",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 145.1,
+      "prefill_tok_s": 161.1,
+      "predicted_n": 391,
+      "output_hash": "da3404f313ff",
+      "output": "```python\ndef is_match(s: str, p: str) -> bool:\n    \"\"\"\n    Implement wildcard pattern matching with support for '?' and '*'.\n    '?' matches any single character.\n    '*' matches any sequence of characters (including empty sequence).\n    The matching should cover the entire input string (not partial).\n    \"\"\"\n    m, n = len(s), len(p)\n    \n    # dp[i][j] means s[:i] matches p[:j]\n    dp = [[False] * (n + 1) for _ in range(m + 1)]\n    \n    # Empty string matches empty pattern\n    dp[0][0] = True\n    \n    # Handle patterns that can match empty string (e.g., \"*\", \"**\", \"*a*\" won't match empty unless all are *)\n    for j in range(1, n + 1):\n        if p[j - 1] == '*':\n            dp[0][j] = dp[0][j - 1]\n        else:\n            dp[0][j] = False\n    \n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if p[j - 1] == '*':\n                # '*' matches zero chars (dp[i][j-1]) or one/more chars (dp[i-1][j])\n                dp[i][j] = dp[i][j - 1] or dp[i - 1][j]\n            elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:\n                dp[i][j] = dp[i - 1][j - 1]\n            else:\n                dp[i][j] = False\n    \n    return dp[m][n]\n```"
+    },
+    {
+      "id": "B4_py_expr",
+      "category": "python",
+      "pass": false,
+      "detail": "py_error(rc=1): Traceback (most recent call last):\n  File \"/tmp/tmp63zi4kmm/test.py\", line 80, in <module>\n    assert eval_expr(\"14 - 3 / 2\") == 13\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "decode_tok_s": 153.9,
+      "prefill_tok_s": 153.2,
+      "predicted_n": 612,
+      "output_hash": "a480295deacd",
+      "output": "```python\ndef eval_expr(expr: str) -> int:\n    \"\"\"\n    Evaluate an integer arithmetic expression with +, -, *, /, parentheses.\n    Division truncates toward zero.\n    \"\"\"\n    # Remove spaces\n    expr = expr.replace(' ', '')\n    \n    pos = 0\n    n = len(expr)\n    \n    def parse_expression():\n        \"\"\"Parse addition and subtraction (lowest precedence).\"\"\"\n        nonlocal pos\n        result = parse_term()\n        while pos < n and expr[pos] in '+-':\n            op = expr[pos]\n            pos += 1\n            term = parse_term()\n            if op == '+':\n                result += term\n            else:\n                result -= term\n        return result\n    \n    def parse_term():\n        \"\"\"Parse multiplication and division (higher precedence).\"\"\"\n        nonlocal pos\n        result = parse_factor()\n        while pos < n and expr[pos] in '*/':\n            op = expr[pos]\n            pos += 1\n            factor = parse_factor()\n            if op == '*':\n                result *= factor\n            else:\n                # Truncate toward zero\n                if result * factor < 0:\n                    result = -((-result) // factor) if result < 0 else -(result // (-factor))\n                    # Simpler: use int() on float division or manual truncation\n                    # Actually, let's use a cleaner approach\n                    result = int(result / factor) if result * factor < 0 else result // factor\n                    # But int() on float can have precision issues. Let's do it properly.\n                    # Truncation toward zero:\n                    if result < 0 and factor > 0:\n                        result = -((-result) // factor)\n                    elif result > 0 and factor < 0:\n                        result = -(result // (-factor))\n                    else:\n                        result = result // factor\n        return result\n    \n    def parse_factor():\n        \"\"\"Parse a number or parenthesized expression, handling unary minus.\"\"\"\n        nonlocal pos\n        if pos < n and expr[pos] == '(':\n            pos += 1  # skip '('\n            result = parse_expression()\n            if pos < n and expr[pos] == ')':\n                pos += 1  # skip ')'\n            return result\n        elif pos < n and expr[pos] == '-':\n            pos += 1  # skip '-'\n            return -parse_factor()\n        elif pos < n and expr[pos] == '+':\n            pos += 1  # skip '+'\n            return parse_factor()\n        else:\n            # Parse a number\n            start = pos\n            while pos < n and expr[pos].isdigit():\n                pos += 1\n            return int(expr[start:pos])\n    \n    return parse_expression()\n```"
+    },
+    {
+      "id": "C1_math_mod",
+      "category": "reasoning",
+      "pass": true,
+      "detail": "expected FINAL: 49, got tail='\\nSo:\\n\\n$$7^{2026} \\\\equiv 7^{2} \\\\pmod{100}$$\\n\\n$$7^2 = 49$$\\n\\n## Result\\n\\nThe last two digits of 7²⁰²⁶ are **49**.\\n\\nFINAL: 49'",
+      "decode_tok_s": 134.3,
+      "prefill_tok_s": 105.3,
+      "predicted_n": 565,
+      "output_hash": "c3589fbb5f6a",
+      "output": "# Finding the Last Two Digits of 7²⁰²⁶\n\n## Finding the Cycle of Powers of 7 mod 100\n\nI compute successive powers of 7 modulo 100:\n\n| Power | Value | mod 100 |\n|-------|-------|---------|\n| 7¹ | 7 | **7** |\n| 7² | 49 | **49** |\n| 7³ | 343 | **43** |\n| 7⁴ | 2401 | **1** |\n| 7⁵ | 16807 | **7** ← cycle repeats |\n\nThe cycle is **{7, 49, 43, 1}** with period **4**.\n\n## Reducing the Exponent\n\n$$2026 = 4 \\times 506 + 2$$\n\nSo:\n\n$$7^{2026} \\equiv 7^{2} \\pmod{100}$$\n\n$$7^2 = 49$$\n\n## Result\n\nThe last two digits of 7²⁰²⁶ are **49**.\n\nFINAL: 49"
+    },
+    {
+      "id": "C2_math_bayes",
+      "category": "reasoning",
+      "pass": true,
+      "detail": "expected FINAL: 16.10%, got tail='ives)\\n- Total positives: 590, of which only 95 truly have the disease\\n\\n$$\\\\frac{95}{590} \\\\approx 16.10\\\\%$$\\n\\nFINAL: 16.10%'",
+      "decode_tok_s": 148.1,
+      "prefill_tok_s": 146.4,
+      "predicted_n": 860,
+      "output_hash": "8848436e9c74",
+      "output": "# Bayes' Theorem: Probability of Disease Given a Positive Test\n\n## Setting Up the Problem\n\nLet me define the events:\n- **D** = person has the disease\n- **+** = person tests positive\n\nGiven:\n- P(D) = 0.01 (prevalence)\n- P(+|D) = 0.95 (sensitivity)\n- P(+|¬D) = 0.05 (false positive rate)\n\n## Applying Bayes' Theorem\n\n$$P(D|+) = \\frac{P(+|D) \\cdot P(D)}{P(+)}$$\n\n**Step 1: Calculate the numerator (True Positives)**\n$$P(+|D) \\cdot P(D) = 0.95 \\times 0.01 = 0.0095$$\n\n**Step 2: Calculate the denominator (Total Positives)**\n$$P(+) = P(+|D)\\cdot P(D) + P(+|\\neg D)\\cdot P(\\neg D)$$\n$$P(+) = (0.95 \\times 0.01) + (0.05 \\times 0.99) = 0.0095 + 0.0495 = 0.059$$\n\n**Step 3: Compute the posterior probability**\n$$P(D|+) = \\frac{0.0095}{0.059} = \\frac{19}{118} \\approx 0.161017$$\n\n## Intuition\n\nOut of 10,000 people:\n- ~100 have the disease → ~95 test positive (true positives)\n- ~9,900 don't have it → ~495 test positive (false positives)\n- Total positives: 590, of which only 95 truly have the disease\n\n$$\\frac{95}{590} \\approx 16.10\\%$$\n\nFINAL: 16.10%"
+    },
+    {
+      "id": "C3_logic_puzzle",
+      "category": "reasoning",
+      "pass": true,
+      "detail": "expected FINAL: S4,S2,S1,S3,S5, got tail='**\\n\\n| Rack | 1 | 2 | 3 | 4 | 5 |\\n|------|---|---|---|---|---|\\n| Server | S4 | S2 | S1 | S3 | S5 |\\n\\nFINAL: S4,S2,S1,S3,S5'",
+      "decode_tok_s": 148.4,
+      "prefill_tok_s": 166.5,
+      "predicted_n": 867,
+      "output_hash": "709eaf2f1d59",
+      "output": "## Solving the Rack Placement\n\n**Given constraints:**\n1. S5 is in rack 5.\n2. S3 is immediately to the right of S1.\n3. S2 is to the left of S1, and S4 is in rack 1.\n\n**Step-by-step:**\n\n- From constraint 1: **Rack 5 = S5**\n- From constraint 3: **Rack 1 = S4**\n- Remaining servers S1, S2, S3 go in racks 2, 3, 4.\n\nFrom constraint 2, S1 and S3 must be adjacent (S1 left, S3 right). From constraint 3, S2 must be to the left of S1.\n\n- If S1 = rack 2 → S3 = rack 3 → S2 = rack 4. But S2 must be *left* of S1. ❌\n- If S1 = rack 3 → S3 = rack 4 → S2 = rack 2. S2 (rack 2) is left of S1 (rack 3). ✅\n- If S1 = rack 4 → S3 = rack 5, but rack 5 is S5. ❌\n\n**Unique solution:**\n\n| Rack | 1 | 2 | 3 | 4 | 5 |\n|------|---|---|---|---|---|\n| Server | S4 | S2 | S1 | S3 | S5 |\n\nFINAL: S4,S2,S1,S3,S5"
+    },
+    {
+      "id": "C4_trace_code",
+      "category": "reasoning",
+      "pass": true,
+      "detail": "expected FINAL: 24, got tail=', 9)` | 10 |\\n| `f(2, 8)` | 10 + 10 = **20** |\\n| `f(3, 4)` | 20 − 1 = **19** |\\n| `f(6, 3)` | 19 + 5 = **24** |\\n\\nFINAL: 24'",
+      "decode_tok_s": 163.9,
+      "prefill_tok_s": 159.6,
+      "predicted_n": 881,
+      "output_hash": "00fea23bd21c",
+      "output": "# Tracing `f(6, 3)`\n\n## Step-by-step evaluation\n\n**`f(6, 3)`**: n=6, k=3 → n is even\n→ `f(3, 4) + (6 ^ 3)`\n→ `f(3, 4) + 5` *(since 110 XOR 011 = 101 = 5)*\n\n**`f(3, 4)`**: n=3, k=4 → n is odd\n→ `f(2, 8) - 1`\n\n**`f(2, 8)`**: n=2, k=8 → n is even\n→ `f(1, 9) + (2 ^ 8)`\n→ `f(1, 9) + 10` *(since 0010 XOR 1000 = 1010 = 10)*\n\n**`f(1, 9)`**: n=1, k=9 → n ≤ 1, base case\n→ `1 + 9 = 10`\n\n## Unwinding\n\n| Call | Result |\n|------|--------|\n| `f(1, 9)` | 10 |\n| `f(2, 8)` | 10 + 10 = **20** |\n| `f(3, 4)` | 20 − 1 = **19** |\n| `f(6, 3)` | 19 + 5 = **24** |\n\nFINAL: 24"
+    },
+    {
+      "id": "D1_json_schema",
+      "category": "json_ja",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 106.9,
+      "prefill_tok_s": 179.8,
+      "predicted_n": 93,
+      "output_hash": "1864738935ec",
+      "output": "{\n  \"service\": \"strata-turbo\",\n  \"port\": 18080,\n  \"gpu\": {\n    \"arch\": \"sm_89\",\n    \"vram_gb\": 16\n  },\n  \"flags\": [\n    \"enable_cache\",\n    \"strict_mode\",\n    \"log_verbose\"\n  ],\n  \"mode\": \"production\"\n}"
+    },
+    {
+      "id": "D2_json_log_extract",
+      "category": "json_ja",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 130.3,
+      "prefill_tok_s": 287.7,
+      "predicted_n": 46,
+      "output_hash": "f52a07b251ea",
+      "output": "{\n  \"total_errors\": 3,\n  \"critical_hosts\": [\n    \"node-b\",\n    \"node-d\"\n  ],\n  \"max_latency_ms\": 420\n}"
+    },
+    {
+      "id": "D3_ja_needle_8k",
+      "category": "json_ja",
+      "pass": true,
+      "detail": "missing needle values in '{\"port\": 29417, \"timeout_ms\": 4500, \"owner\": \"高橋健太\"}'",
+      "decode_tok_s": 133.7,
+      "prefill_tok_s": 3359.3,
+      "predicted_n": 30,
+      "output_hash": "aa964a093e28",
+      "output": "{\"port\": 29417, \"timeout_ms\": 4500, \"owner\": \"高橋健太\"}"
+    },
+    {
+      "id": "D4_ja_constrained_summary",
+      "category": "json_ja",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 74.2,
+      "prefill_tok_s": 176.6,
+      "predicted_n": 62,
+      "output_hash": "82ca8470b5b5",
+      "output": "- VRAM不足時はPCIe経由でCPUメモリにオフロードし推論を継続する\n- 専門家ネットワークの選択を最適化し、不要な計算を削減して高速化する\n- CPUとGPU間のデータ転送を最小化し、レイテンシを低減する"
+    }
+  ]
+}
