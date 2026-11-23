@@ -1,0 +1,186 @@
+{
+  "tag": "v0220_fixed_qual",
+  "timestamp": "2026-11-23T14:47:15+0900",
+  "passed": 16,
+  "total": 16,
+  "pass_rate_pct": 100.0,
+  "median_decode_tok_s": 142.1,
+  "results": [
+    {
+      "id": "A1_cpp_lru",
+      "category": "cpp",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 140.6,
+      "prefill_tok_s": 140.4,
+      "predicted_n": 367,
+      "output_hash": "ee6898310e8e",
+      "output": "```cpp\n#include <unordered_map>\n#include <list>\n#include <utility>\n\nclass LRUCache {\nprivate:\n    int capacity;\n    std::list<std::pair<int, int>> cacheList; // front = most recently used, back = least recently used\n    std::unordered_map<int, std::list<std::pair<int, int>>::iterator> cacheMap;\n\npublic:\n    LRUCache(int capacity) : capacity(capacity) {}\n\n    int get(int key) {\n        auto it = cacheMap.find(key);\n        if (it == cacheMap.end()) {\n            return -1;\n        }\n        // Move the accessed item to the front (most recently used)\n        cacheList.splice(cacheList.begin(), cacheList, it->second);\n        return it->second->second;\n    }\n\n    void put(int key, int value) {\n        auto it = cacheMap.find(key);\n        if (it != cacheMap.end()) {\n            // Key exists: update value and move to front\n            it->second->second = value;\n            cacheList.splice(cacheList.begin(), cacheList, it->second);\n        } else {\n            // Key does not exist\n            if (static_cast<int>(cacheMap.size()) == capacity) {\n                // Evict the least recently used item (back of the list)\n                auto lruIt = cacheList.back();\n                cacheMap.erase(lruIt.first);\n                cacheList.pop_back();\n            }\n            // Insert new item at the front\n            cacheList.push_front({key, value});\n            cacheMap[key] = cacheList.begin();\n        }\n    }\n};\n```"
+    },
+    {
+      "id": "A2_cpp_intervals",
+      "category": "cpp",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 144.7,
+      "prefill_tok_s": 156.7,
+      "predicted_n": 246,
+      "output_hash": "320f044d997b",
+      "output": "```cpp\n#include <vector>\n#include <algorithm>\n#include <utility>\n\nusing namespace std;\n\nvector<pair<int,int>> merge_intervals(vector<pair<int,int>> intervals) {\n    if (intervals.empty()) {\n        return {};\n    }\n    \n    // Sort intervals by start time\n    sort(intervals.begin(), intervals.end(), [](const pair<int,int>& a, const pair<int,int>& b) {\n        return a.first < b.first;\n    });\n    \n    vector<pair<int,int>> merged;\n    merged.push_back(intervals[0]);\n    \n    for (size_t i = 1; i < intervals.size(); ++i) {\n        auto& last = merged.back();\n        const auto& current = intervals[i];\n        \n        // If current interval overlaps or touches the last merged interval\n        if (current.first <= last.second) {\n            // Merge by extending the end if needed\n            last.second = max(last.second, current.second);\n        } else {\n            // No overlap, add new interval\n            merged.push_back(current);\n        }\n    }\n    \n    return merged;\n}\n```"
+    },
+    {
+      "id": "A3_cpp_queue",
+      "category": "cpp",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 155.6,
+      "prefill_tok_s": 170.8,
+      "predicted_n": 222,
+      "output_hash": "ebf55d97a0cf",
+      "output": "```cpp\n#include <queue>\n#include <mutex>\n#include <condition_variable>\n#include <cstddef>\n\nclass BoundedQueue {\npublic:\n    explicit BoundedQueue(size_t cap) : capacity_(cap) {}\n\n    bool try_push(int v) {\n        std::lock_guard<std::mutex> lock(mutex_);\n        if (queue_.size() >= capacity_) {\n            return false;\n        }\n        queue_.push(v);\n        cv_.notify_one();\n        return true;\n    }\n\n    bool try_pop(int& out) {\n        std::lock_guard<std::mutex> lock(mutex_);\n        if (queue_.empty()) {\n            return false;\n        }\n        out = queue_.front();\n        queue_.pop();\n        cv_.notify_one();\n        return true;\n    }\n\nprivate:\n    std::queue<int> queue_;\n    std::mutex mutex_;\n    std::condition_variable cv_;\n    size_t capacity_;\n};\n```"
+    },
+    {
+      "id": "A4_cpp_parse",
+      "category": "cpp",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 152.3,
+      "prefill_tok_s": 165.9,
+      "predicted_n": 302,
+      "output_hash": "193eb9654796",
+      "output": "```cpp\n#include <string>\n#include <vector>\n#include <sstream>\n#include <algorithm>\n#include <cctype>\n\nvector<int> parse_csv_ints(const string& s) {\n    vector<int> result;\n    stringstream ss(s);\n    string segment;\n    \n    while (getline(ss, segment, ',')) {\n        // Trim leading whitespace\n        size_t start = 0;\n        while (start < segment.size() && isspace(static_cast<unsigned char>(segment[start]))) {\n            ++start;\n        }\n        \n        // Trim trailing whitespace\n        size_t end = segment.size();\n        while (end > start && isspace(static_cast<unsigned char>(segment[end - 1]))) {\n            --end;\n        }\n        \n        // Skip empty segments\n        if (start >= end) {\n            continue;\n        }\n        \n        string trimmed = segment.substr(start, end - start);\n        \n        // Parse integer\n        try {\n            size_t pos = 0;\n            int value = stoi(trimmed, &pos);\n            // Ensure the entire trimmed string was consumed (no extra non-whitespace chars)\n            if (pos == trimmed.size()) {\n                result.push_back(value);\n            }\n        } catch (...) {\n            // Skip invalid numbers\n            continue;\n        }\n    }\n    \n    return result;\n}\n```"
+    },
+    {
+      "id": "B1_py_dijkstra",
+      "category": "python",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 142.6,
+      "prefill_tok_s": 160.8,
+      "predicted_n": 205,
+      "output_hash": "764ebea7e990",
+      "output": "```python\nimport heapq\n\ndef shortest_path(n, edges, src, dst):\n    # Build adjacency list\n    graph = [[] for _ in range(n)]\n    for u, v, w in edges:\n        graph[u].append((v, w))\n    \n    # Dijkstra's algorithm\n    dist = [float('inf')] * n\n    dist[src] = 0\n    heap = [(0, src)]\n    \n    while heap:\n        d, u = heapq.heappop(heap)\n        if d > dist[u]:\n            continue\n        if u == dst:\n            return d\n        for v, w in graph[u]:\n            new_dist = d + w\n            if new_dist < dist[v]:\n                dist[v] = new_dist\n                heapq.heappush(heap, (new_dist, v))\n    \n    return -1 if dist[dst] == float('inf') else dist[dst]\n```"
+    },
+    {
+      "id": "B2_py_toposort",
+      "category": "python",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 152.8,
+      "prefill_tok_s": 145.7,
+      "predicted_n": 203,
+      "output_hash": "0ce31f70fabe",
+      "output": "```python\ndef topo_order(n, edges):\n    from collections import deque\n    \n    # Build adjacency list and in-degree array\n    adj = [[] for _ in range(n)]\n    in_degree = [0] * n\n    \n    for u, v in edges:\n        adj[u].append(v)\n        in_degree[v] += 1\n    \n    # Initialize queue with nodes having in-degree 0\n    queue = deque()\n    for i in range(n):\n        if in_degree[i] == 0:\n            queue.append(i)\n    \n    result = []\n    while queue:\n        node = queue.popleft()\n        result.append(node)\n        for neighbor in adj[node]:\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                queue.append(neighbor)\n    \n    if len(result) == n:\n        return result\n    else:\n        return None\n```"
+    },
+    {
+      "id": "B3_py_wildcard",
+      "category": "python",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 141.6,
+      "prefill_tok_s": 157.0,
+      "predicted_n": 394,
+      "output_hash": "547239e0e983",
+      "output": "```python\ndef is_match(s: str, p: str) -> bool:\n    \"\"\"\n    Implement wildcard pattern matching with support for '?' and '*'.\n    '?' matches any single character.\n    '*' matches any sequence of characters (including empty sequence).\n    The matching should cover the entire input string (not partial).\n    \"\"\"\n    m, n = len(s), len(p)\n    \n    # dp[i][j] means s[:i] matches p[:j]\n    dp = [[False] * (n + 1) for _ in range(m + 1)]\n    \n    # Empty string matches empty pattern\n    dp[0][0] = True\n    \n    # Handle patterns with '*' that can match empty string\n    for j in range(1, n + 1):\n        if p[j - 1] == '*':\n            dp[0][j] = dp[0][j - 1]\n        else:\n            dp[0][j] = False\n    \n    # Fill the DP table\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if p[j - 1] == '*':\n                # '*' matches zero chars (dp[i][j-1]) or one/more chars (dp[i-1][j])\n                dp[i][j] = dp[i][j - 1] or dp[i - 1][j]\n            elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:\n                # '?' matches any single char, or exact match\n                dp[i][j] = dp[i - 1][j - 1]\n            else:\n                dp[i][j] = False\n    \n    return dp[m][n]\n```"
+    },
+    {
+      "id": "B4_py_expr",
+      "category": "python",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 154.0,
+      "prefill_tok_s": 153.3,
+      "predicted_n": 598,
+      "output_hash": "5b8be0e04a7e",
+      "output": "```python\ndef eval_expr(expr: str) -> int:\n    \"\"\"\n    Evaluate an integer arithmetic expression with +, -, *, /, parentheses.\n    Division truncates toward zero.\n    \"\"\"\n    tokens = []\n    i = 0\n    n = len(expr)\n    while i < n:\n        ch = expr[i]\n        if ch == ' ':\n            i += 1\n        elif ch in '+-*/()':\n            tokens.append(ch)\n            i += 1\n        elif ch.isdigit():\n            j = i\n            while j < n and expr[j].isdigit():\n                j += 1\n            tokens.append(int(expr[i:j]))\n            i = j\n        else:\n            raise ValueError(f\"Unexpected character: {ch}\")\n    \n    pos = [0]  # mutable index\n    \n    def parse_expr():\n        \"\"\"Parse addition and subtraction.\"\"\"\n        result = parse_term()\n        while pos[0] < len(tokens) and tokens[pos[0]] in ('+', '-'):\n            op = tokens[pos[0]]\n            pos[0] += 1\n            right = parse_term()\n            if op == '+':\n                result += right\n            else:\n                result -= right\n        return result\n    \n    def parse_term():\n        \"\"\"Parse multiplication and division.\"\"\"\n        result = parse_factor()\n        while pos[0] < len(tokens) and tokens[pos[0]] in ('*', '/'):\n            op = tokens[pos[0]]\n            pos[0] += 1\n            right = parse_factor()\n            if op == '*':\n                result *= right\n            else:\n                # Truncate toward zero\n                if result * right < 0:\n                    result = -((-result) // right) if result < 0 else -(result // (-right))\n                else:\n                    result = result // right\n        return result\n    \n    def parse_factor():\n        \"\"\"Parse a number or parenthesized expression.\"\"\"\n        if pos[0] >= len(tokens):\n            raise ValueError(\"Unexpected end of expression\")\n        token = tokens[pos[0]]\n        if token == '(':\n            pos[0] += 1\n            result = parse_expr()\n            if pos[0] >= len(tokens) or tokens[pos[0]] != ')':\n                raise ValueError(\"Missing closing parenthesis\")\n            pos[0] += 1\n            return result\n        elif isinstance(token, int):\n            pos[0] += 1\n            return token\n        else:\n            raise ValueError(f\"Unexpected token: {token}\")\n    \n    result = parse_expr()\n    if pos[0] != len(tokens):\n        raise ValueError(\"Unexpected tokens at end\")\n    return result\n```"
+    },
+    {
+      "id": "C1_math_mod",
+      "category": "reasoning",
+      "pass": true,
+      "detail": "expected FINAL: 49, got tail='\\\\equiv 1^{506} \\\\cdot 49 \\\\equiv 49 \\\\pmod{100}$$\\n\\n## Verification\\n\\n- 7⁴ = 2401 → 2401 mod 100 = 1 ✓\\n- 7² = 49 ✓\\n\\nFINAL: 49'",
+      "decode_tok_s": 136.3,
+      "prefill_tok_s": 103.2,
+      "predicted_n": 637,
+      "output_hash": "d8972725aa31",
+      "output": "# Finding 7^2026 mod 100\n\n## Finding the Cycle of Powers of 7 mod 100\n\nI'll compute successive powers of 7 modulo 100:\n\n| Power | Value | mod 100 |\n|-------|-------|---------|\n| 7¹ | 7 | **7** |\n| 7² | 49 | **49** |\n| 7³ | 343 | **43** |\n| 7⁴ | 2401 | **1** |\n| 7⁵ | 16807 | **7** ← cycle repeats |\n\nThe cycle is **{7, 49, 43, 1}** with period **4**.\n\n## Reducing the Exponent\n\nSince the cycle length is 4:\n\n$$2026 \\div 4 = 506 \\text{ remainder } 2$$\n\nSo:\n\n$$7^{2026} = (7^4)^{506} \\cdot 7^2 \\equiv 1^{506} \\cdot 49 \\equiv 49 \\pmod{100}$$\n\n## Verification\n\n- 7⁴ = 2401 → 2401 mod 100 = 1 ✓\n- 7² = 49 ✓\n\nFINAL: 49"
+    },
+    {
+      "id": "C2_math_bayes",
+      "category": "reasoning",
+      "pass": true,
+      "detail": "expected FINAL: 16.10%, got tail='s false positives vastly outnumber true positives, making the positive predictive value surprisingly low.\\n\\nFINAL: 16.10%'",
+      "decode_tok_s": 139.4,
+      "prefill_tok_s": 147.5,
+      "predicted_n": 867,
+      "output_hash": "6205ab8dcaff",
+      "output": "# Bayes' Theorem: Probability of Disease Given a Positive Test\n\n## Setting Up the Problem\n\nLet me define the events:\n- **D** = person has the disease\n- **+** = person tests positive\n\nGiven:\n- P(D) = 0.01 (prevalence)\n- P(+|D) = 0.95 (sensitivity)\n- P(+|¬D) = 0.05 (false positive rate)\n- P(¬D) = 0.99\n\n## Applying Bayes' Theorem\n\n$$P(D|+) = \\frac{P(+|D) \\cdot P(D)}{P(+)}$$\n\n**Step 1: Compute the numerator (True Positives)**\n$$P(+|D) \\cdot P(D) = 0.95 \\times 0.01 = 0.0095$$\n\n**Step 2: Compute the denominator (Total Positives)**\n$$P(+) = P(+|D)\\cdot P(D) + P(+|\\neg D)\\cdot P(\\neg D)$$\n$$P(+) = (0.95 \\times 0.01) + (0.05 \\times 0.99) = 0.0095 + 0.0495 = 0.059$$\n\n**Step 3: Compute the posterior probability**\n$$P(D|+) = \\frac{0.0095}{0.059} = \\frac{19}{118} \\approx 0.161017$$\n\n## Intuition Check\n\nOut of 10,000 people:\n- ~100 have the disease → ~95 test positive (true positives)\n- ~9,900 don't have it → ~495 test positive (false positives)\n- Total positives: 590\n- True positives among positives: 95/590 ≈ 16.10%\n\nThe low prevalence means false positives vastly outnumber true positives, making the positive predictive value surprisingly low.\n\nFINAL: 16.10%"
+    },
+    {
+      "id": "C3_logic_puzzle",
+      "category": "reasoning",
+      "pass": true,
+      "detail": "expected FINAL: S4,S2,S1,S3,S5, got tail='5 |\\n|--------|--------|--------|--------|--------|\\n| S4     | S2     | S1     | S3     | S5     |\\n\\nFINAL: S4,S2,S1,S3,S5'",
+      "decode_tok_s": 147.2,
+      "prefill_tok_s": 194.6,
+      "predicted_n": 760,
+      "output_hash": "8cba3b39ab89",
+      "output": "## Solving the Rack Placement Puzzle\n\n**Given constraints:**\n1. S5 is in rack 5.\n2. S3 is immediately to the right of S1.\n3. S2 is to the left of S1, and S4 is in rack 1.\n\n**Step-by-step deduction:**\n\n- From constraint 1: **Rack 5 = S5**\n- From constraint 3: **Rack 1 = S4**\n- Remaining servers S1, S2, S3 go in racks 2, 3, 4.\n\n**Placing S1 and S3 (constraint 2):** S3 must be immediately right of S1, so possible pairs are (S1=2, S3=3) or (S1=3, S3=4).\n\n**Applying constraint 3 (S2 left of S1):**\n- If S1=2, S3=3 → S2 must be in rack 4, but rack 4 is to the *right* of S1. ❌ Contradiction.\n- If S1=3, S3=4 → S2 must be in rack 2, which is to the *left* of S1. ✅ Works.\n\n**Final arrangement:**\n\n| Rack 1 | Rack 2 | Rack 3 | Rack 4 | Rack 5 |\n|--------|--------|--------|--------|--------|\n| S4     | S2     | S1     | S3     | S5     |\n\nFINAL: S4,S2,S1,S3,S5"
+    },
+    {
+      "id": "C4_trace_code",
+      "category": "reasoning",
+      "pass": true,
+      "detail": "expected FINAL: 24, got tail=', 9)` | 10 |\\n| `f(2, 8)` | 10 + 10 = **20** |\\n| `f(3, 4)` | 20 − 1 = **19** |\\n| `f(6, 3)` | 19 + 5 = **24** |\\n\\nFINAL: 24'",
+      "decode_tok_s": 155.2,
+      "prefill_tok_s": 194.1,
+      "predicted_n": 827,
+      "output_hash": "ef8b0d7d6285",
+      "output": "# Tracing `f(6, 3)`\n\n## Step-by-step evaluation:\n\n**`f(6, 3)`** → n=6 (even) → `f(3, 4) + (6 ^ 3)`\n- 6 ^ 3 = 110₂ ^ 011₂ = 101₂ = **5**\n\n**`f(3, 4)`** → n=3 (odd) → `f(2, 8) - 1`\n\n**`f(2, 8)`** → n=2 (even) → `f(1, 9) + (2 ^ 8)`\n- 2 ^ 8 = 0010₂ ^ 1000₂ = 1010₂ = **10**\n\n**`f(1, 9)`** → n=1 ≤ 1 → return `1 + 9 = 10`\n\n## Unwinding the recursion:\n\n| Call | Result |\n|------|--------|\n| `f(1, 9)` | 10 |\n| `f(2, 8)` | 10 + 10 = **20** |\n| `f(3, 4)` | 20 − 1 = **19** |\n| `f(6, 3)` | 19 + 5 = **24** |\n\nFINAL: 24"
+    },
+    {
+      "id": "D1_json_schema",
+      "category": "json_ja",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 106.4,
+      "prefill_tok_s": 180.6,
+      "predicted_n": 95,
+      "output_hash": "3e25a716193f",
+      "output": "{\n  \"service\": \"strata-turbo\",\n  \"port\": 18080,\n  \"gpu\": {\n    \"arch\": \"sm_89\",\n    \"vram_gb\": 16\n  },\n  \"flags\": [\n    \"enable_cache\",\n    \"use_fp16\",\n    \"log_verbose\"\n  ],\n  \"mode\": \"production\"\n}"
+    },
+    {
+      "id": "D2_json_log_extract",
+      "category": "json_ja",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 127.4,
+      "prefill_tok_s": 286.2,
+      "predicted_n": 46,
+      "output_hash": "f52a07b251ea",
+      "output": "{\n  \"total_errors\": 3,\n  \"critical_hosts\": [\n    \"node-b\",\n    \"node-d\"\n  ],\n  \"max_latency_ms\": 420\n}"
+    },
+    {
+      "id": "D3_ja_needle_8k",
+      "category": "json_ja",
+      "pass": true,
+      "detail": "missing needle values in '{\"port\": 29417, \"timeout_ms\": 4500, \"owner\": \"高橋健太\"}'",
+      "decode_tok_s": 127.8,
+      "prefill_tok_s": 3353.9,
+      "predicted_n": 30,
+      "output_hash": "aa964a093e28",
+      "output": "{\"port\": 29417, \"timeout_ms\": 4500, \"owner\": \"高橋健太\"}"
+    },
+    {
+      "id": "D4_ja_constrained_summary",
+      "category": "json_ja",
+      "pass": true,
+      "detail": "ok",
+      "decode_tok_s": 68.6,
+      "prefill_tok_s": 175.8,
+      "predicted_n": 46,
+      "output_hash": "6186d65aaf12",
+      "output": "- 不活性化専門家によりVRAM使用量を大幅に削減可能\n- PCIe帯域のボトルネックを回避し転送を最適化\n- CPU側で重み管理しGPU計算負荷を分散"
+    }
+  ]
+}

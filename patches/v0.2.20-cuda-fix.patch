@@ -1,0 +1,59 @@
+diff --git a/engine/src/kernels/cuda/fused_gr.cu b/engine/src/kernels/cuda/fused_gr.cu
+index 7c71256e2..a432e9e9b 100644
+--- a/engine/src/kernels/cuda/fused_gr.cu
++++ b/engine/src/kernels/cuda/fused_gr.cu
+@@ -2196,6 +2196,7 @@ __device__ __forceinline__ uint32_t q8_ld16(const uint8_t* p) { return *(const u
+ #else
+ __device__ __forceinline__ uint32_t q8_ld16(const uint8_t* p) { return __ldg(reinterpret_cast<const uint16_t*>(p)); }
+ #endif
++__device__ __forceinline__ uint32_t q8_lds16(const uint8_t* p) { return *reinterpret_cast<const uint16_t*>(p); }
+ __device__ __forceinline__ float q8_half(uint32_t h) { return __half2float(__ushort_as_half((unsigned short) h)); }
+ __device__ __forceinline__ float4 q8_four(uint32_t q, float d) {
+     return make_float4(d * (float) (int8_t) (q & 255u), d * (float) (int8_t) ((q >> 8) & 255u),
+@@ -3677,7 +3678,7 @@ __global__ void __launch_bounds__(THREADS) gr_down_q8_tc_kernel(GrMulti m, float
+             const uint8_t* wr = m.a[0].q8_inject + (size_t) r * (D / 32) * Q8B + (size_t) kc * ROW_BYTES;
+             for (int b = 0; b < NB; ++b) {
+                 const uint8_t* blk = wr + b * Q8B;
+-                const float dw = q8_half(q8_ld16(blk));
++                const float dw = q8_half(q8_lds16(blk));
+                 const int wq = (int) (int8_t) blk[2 + lane];
+ #pragma unroll
+                 for (int k = 0; k < T; ++k) acc[k] = fmaf(dw * xs_d[k][b], (float) (wq * (int) xs_q[k][b * 32 + lane]), acc[k]);
+@@ -3705,12 +3706,12 @@ __global__ void __launch_bounds__(THREADS) gr_down_q8_tc_kernel(GrMulti m, float
+     for (int b = b_start; b < b_end; ++b) {
+         const uint8_t* blk0 = w0 + b * Q8B;
+         const uint8_t* blk1 = w1 + b * Q8B;
+-        const float dw0 = q8_half(q8_ld16(blk0));
+-        const float dw1 = q8_half(q8_ld16(blk1));
+-        const uint32_t a0 = q8_ld16(blk0 + 2 + tig * 4) | (q8_ld16(blk0 + 4 + tig * 4) << 16);
+-        const uint32_t a2 = q8_ld16(blk0 + 18 + tig * 4) | (q8_ld16(blk0 + 20 + tig * 4) << 16);
+-        const uint32_t a1 = q8_ld16(blk1 + 2 + tig * 4) | (q8_ld16(blk1 + 4 + tig * 4) << 16);
+-        const uint32_t a3 = q8_ld16(blk1 + 18 + tig * 4) | (q8_ld16(blk1 + 20 + tig * 4) << 16);
++        const float dw0 = q8_half(q8_lds16(blk0));
++        const float dw1 = q8_half(q8_lds16(blk1));
++        const uint32_t a0 = q8_lds16(blk0 + 2 + tig * 4) | (q8_lds16(blk0 + 4 + tig * 4) << 16);
++        const uint32_t a2 = q8_lds16(blk0 + 18 + tig * 4) | (q8_lds16(blk0 + 20 + tig * 4) << 16);
++        const uint32_t a1 = q8_lds16(blk1 + 2 + tig * 4) | (q8_lds16(blk1 + 4 + tig * 4) << 16);
++        const uint32_t a3 = q8_lds16(blk1 + 18 + tig * 4) | (q8_lds16(blk1 + 20 + tig * 4) << 16);
+         const uint32_t b0 = (g < T) ? *reinterpret_cast<const uint32_t*>(&xs_q[g][b * 32 + tig * 4]) : 0u;
+         const uint32_t b1 = (g < T) ? *reinterpret_cast<const uint32_t*>(&xs_q[g][b * 32 + 16 + tig * 4]) : 0u;
+         int32_t d[4] = {0, 0, 0, 0};
+@@ -3840,12 +3841,12 @@ __global__ void __launch_bounds__(THREADS) gr_up_q8_tc_kernel(GrMulti m, const f
+     for (int b = b_start; b < b_end; ++b) {
+         const uint8_t* blk0 = w0 + b * Q8B;
+         const uint8_t* blk1 = w1 + b * Q8B;
+-        const float dw0 = q8_half(q8_ld16(blk0));
+-        const float dw1 = q8_half(q8_ld16(blk1));
+-        const uint32_t a0 = q8_ld16(blk0 + 2 + tig * 4) | (q8_ld16(blk0 + 4 + tig * 4) << 16);
+-        const uint32_t a2 = q8_ld16(blk0 + 18 + tig * 4) | (q8_ld16(blk0 + 20 + tig * 4) << 16);
+-        const uint32_t a1 = q8_ld16(blk1 + 2 + tig * 4) | (q8_ld16(blk1 + 4 + tig * 4) << 16);
+-        const uint32_t a3 = q8_ld16(blk1 + 18 + tig * 4) | (q8_ld16(blk1 + 20 + tig * 4) << 16);
++        const float dw0 = q8_half(q8_lds16(blk0));
++        const float dw1 = q8_half(q8_lds16(blk1));
++        const uint32_t a0 = q8_lds16(blk0 + 2 + tig * 4) | (q8_lds16(blk0 + 4 + tig * 4) << 16);
++        const uint32_t a2 = q8_lds16(blk0 + 18 + tig * 4) | (q8_lds16(blk0 + 20 + tig * 4) << 16);
++        const uint32_t a1 = q8_lds16(blk1 + 2 + tig * 4) | (q8_lds16(blk1 + 4 + tig * 4) << 16);
++        const uint32_t a3 = q8_lds16(blk1 + 18 + tig * 4) | (q8_lds16(blk1 + 20 + tig * 4) << 16);
+         const uint32_t b0 = (g < T) ? *reinterpret_cast<const uint32_t*>(&lo_q[g][b * 32 + tig * 4]) : 0u;
+         const uint32_t b1 = (g < T) ? *reinterpret_cast<const uint32_t*>(&lo_q[g][b * 32 + 16 + tig * 4]) : 0u;
+         int32_t d[4] = {0, 0, 0, 0};

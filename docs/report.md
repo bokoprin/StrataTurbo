@@ -1,7 +1,7 @@
 # StrataTurbo 最適化完了レポート（ターボ不使用・品質維持・限界最適化）
 
-- **実施日**: 2026-11-22
-- **対象バージョン**: Strata `v0.2.19` (`build 0.1.65` / `rtx4080-turbo` ネイティブビルド)
+- **実施日**: 2026-11-22 〜 2026-11-23
+- **対象バージョン**: Strata `v0.2.20` (`build 0.1.66` / `rtx4080-turbo` ネイティブビルド + `patches/v0.2.20-cuda-fix.patch`)
 - **対象サーバー**: `gwol-target` (`192.168.10.20` / `ILeDEi-R779`)
 - **ハードウェア**: NVIDIA GeForce RTX 4080 16GB (`sm_89`) / Intel Core i9-14900KF (`no_turbo=1` 3.2 GHz 固定維持) / 64 GiB DDR5-4000
 - **対象モデル**: `Qwen3.8-Flash-Next-UD-IQ3_XXS` + `DFlash2 (q4_0-selq4)`
@@ -85,3 +85,29 @@ C++ コンパイル＆実行テスト（4問）、Python 単体テスト（4問�
 | `v0.2.19` PLE無効 (`v0219_clean_nople`, `n=3`) | 4,654 | 123.70 | 110.80 | 98.70 / 1,542.6 | 102.90 / 3,442.8 | — |
 
 - `v0.2.19` では公式 `sm_89` デフォルトに重複する手動 `sm_86` 環境変数を外した `v0219_clean_sm89` が最速（`decode_code` 128.00 tok/s / `decode_ja` 110.70 tok/s）となり、16問厳密品質テストは **16/16 (100.0%)** を達成。サービスは `active` / `/health` `loaded: true` で正常稼働中です。
+
+---
+
+## 6. Strata `v0.2.20` (`engine 0.1.66`) バグ修正＆追従検証結果
+
+### 6.1 本家 `v0.2.20` の CUDA バグ原因と修正パッチ
+- **事象**: `v0.2.20`（公式 `0.1.66` バイナリおよび自前ビルドの両方）で初回推論ウォームアップ時に `verify: layer 0 never rang (operation not supported on global/shared address space)` で異常終了。
+- **原因**: `compute-sanitizer --tool memcheck` により、`engine/src/kernels/cuda/fused_gr.cu` で新設された `gr_up_q8_tc_kernel`（および `gr_down_q8_tc_kernel`）が、`__shared__` メモリ上の重みバッファ `s_w` に対してグローバルメモリ専用の `__ldg()` を使う `q8_ld16()` を呼んでいたことを特定。
+- **修正**: `q8_lds16()`（通常の shared memory ロード）を追加して `gr_down_q8_tc_kernel` / `gr_up_q8_tc_kernel` 内の `s_w` 読み出しを置き換え（[patches/v0.2.20-cuda-fix.patch](../patches/v0.2.20-cuda-fix.patch)）。
+
+### 6.2 短文・中文・長文 速度測定結果（`v0.2.19` 比）
+
+| 条件 | Slots | `decode_code` (短文) | `decode_ja` (短文) | `prefill_mid` (4.2K, D / P) | `prefill_long` (13K, D / P) | 17.6K 長文 (D / P) | 16問品質 |
+|---|---:|---:|---:|---:|---:|---:|---|
+| `v0.2.19` (`v0219_clean_sm89`, `n=5`) | 4,654 | 128.00 | 110.70 | 101.10 / 1,542.5 | 103.30 / 3,429.0 | — | 16/16 |
+| **`v0.2.20` 修正版 (`v0220_fixed_bench`, `n=3`)** | **4,654** | **121.60** *(最大 132.3)* | **105.60** *(最大 107.0)* | **101.90 / 1,632.1** | **101.60 / 3,420.9** | **94.1 / 3,552.6** | **16/16 (100%)** |
+
+- **16問厳密品質テスト (`v0220_fixed_qual`)**: **16/16 PASS (100.0%)**、中央値 Decode **142.1 tok/s**（最大 **155.6 tok/s**）。
+- **温度・VRAM**: CPU **50.0℃** / GPU **54.0℃**、負荷時空き VRAM **185 MiB**（従来より約 180 MiB 余裕増）。
+- **特筆**: `prefill_mid` (4.2K) の Prefill が 1,542.5 → **1,632.1 tok/s (+5.8%)** へ向上し、Expert Cache ヒット率も 79〜84% に上昇。
+
+### 6.3 `v0.2.20` で見つかった今後の高速化余地（未実施・調査メモ）
+1. **VRAM 空き余裕の活用（`--vram-reserve-mib 192 → 96〜128`）**: `v0.2.20` では連続負荷時でも VRAM が 185 MiB 余っているため、リザーブをさらに詰めてキャッシュスロットを増やす余地あり。
+2. **`#4870` 適応キャッシュ / ピン留め率 (`STRATA_CACHE_PIN_FRAC`)**: デフォルトで上位 25%（1,163 スロット）を追い出し禁止にし、スワップ頻度も倍増（4→2）しているため、短文 Decode がわずかに落ちた要因になっていないか `STRATA_CACHE_PIN_FRAC=0` 等で検証する余地あり。
+3. **新設 Tensor Core モード (`STRATA_HC_Q8_TC=2` / `STRATA_HC_Q8_BF16TC=1`)**: `gr_down_q8_tc_kernel` 併用時の A/B 比較余地あり。
+4. **CPU ワーカー数再検証（`--pool-workers 23` vs `15`/`19`）**: `v0.2.20` で CPU `IQ3_XXS` カーネルが高速化されたため、最適ワーカー数が変わった可能性あり。
