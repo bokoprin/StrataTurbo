@@ -1,6 +1,6 @@
 # StrataTurbo
 
-NVIDIA GeForce **RTX 4080 16GB (`sm_89`)** + **Intel Core i9-14900KF**（`no_turbo=1` / 3.2 GHz 固定）環境向けに、[Niko1221/Strata](https://github.com/Niko1221/Strata) (`v0.2.20` / engine `0.1.66` + CUDA 修正パッチ) 上で **Qwen3.8-Flash-Next-UD-IQ3_XXS** を限界まで高速化するための専用ビルド・最適化設定・ベンチマーク＆品質検証キットです。
+NVIDIA GeForce **RTX 4080 16GB (`sm_89`)** + **Intel Core i9-14900KF**（`no_turbo=1` / 3.2 GHz 固定）環境向けに、[Niko1221/Strata](https://github.com/Niko1221/Strata) (`v0.2.21` / engine `0.1.67`) 上で **Qwen3.8-Flash-Next-UD-IQ3_XXS** を限界まで高速化するための専用ビルド・最適化設定・ベンチマーク＆品質検証キットです。
 
 ---
 
@@ -19,8 +19,8 @@ NVIDIA GeForce **RTX 4080 16GB (`sm_89`)** + **Intel Core i9-14900KF**（`no_tur
 
 詳細な測定データ・各施策の A/B 比較表は [docs/report.md](docs/report.md) を参照してください。
 
-> **Strata v0.2.20 最新チューニング結果 (`v0220_opt_best`, `--vram-reserve-mib 96` + `STRATA_CACHE_PIN_FRAC=0`)**:
-> `decode_code` **129.70 tok/s** (最大 145.7), `decode_ja` **109.40 tok/s**, `prefill_mid` **101.90 / 1644.30 tok/s**, `prefill_long` **109.20 / 3438.40 tok/s**, Expert Cache **4,704 slots (8.97 GiB)**, 17.6K ストレス **PASS** (prefill 3583.5 tok/s), 16問品質テスト **15/16 PASS** (`median_dec=146.6 tok/s`)。
+> **Strata v0.2.21 最新結果 (`v0221_opt_bench`, `--vram-reserve-mib 96` + `STRATA_CACHE_PIN_FRAC=0`)**:
+> `decode_code` **128.30 tok/s**, `decode_ja` **110.50 tok/s**, `prefill_mid` **101.60 / 1643.20 tok/s**, `prefill_long` **101.90 / 3431.60 tok/s**, Expert Cache **4,704 slots (8.97 GiB)**, 17.6K ストレス **PASS** (`prefill=3536.10` / `decode=106.60 tok/s`), 16問品質テスト **16/16 PASS** (`median_dec=151.15 tok/s`)。
 
 ---
 

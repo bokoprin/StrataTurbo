@@ -138,3 +138,18 @@ C++ コンパイル＆実行テスト（4問）、Python 単体テスト（4問�
 - **17.6K 長文ストレステスト**: `STRESS_OK`（`prompt_n=16731`, `predicted_n=128`, `elapsed=5.99s`, `prefill=3583.50 tok/s`, `decode=99.30 tok/s`, VRAM 残り `89 MiB` / OOM なし）
 - **16問品質評価 (`v0220_opt_qual`)**: **15/16 PASS (93.8%)**, `median_dec=146.6 tok/s`（`B4_py_expr` のみ Python 負数除算丸め差異）
 - **温度（`no_turbo=1` 維持）**: CPU `x86_pkg_temp=50.0°C`, GPU `55°C`
+
+---
+
+## 7. Strata `v0.2.21` (`engine 0.1.67` / Control `0.1.67`) 追従結果
+
+- **変更点**: `v0.2.20` で独自に当てていた `fused_gr.cu` の CUDA shared memory ロード修正（`q8_smem_ld16`）が本家 `v0.2.21` に取り込まれたため、パッチ不要のクリーンな本家ソース (`v0.2.21`) で `build/rtx4080/strata` を再ビルドしました。Control も `0.1.67`（`strata 0.2.21`）へ更新済みです。
+- **速度測定 (`v0221_opt_bench`, `n=3` 中央値)**:
+  - `decode_code`: **128.30 tok/s** *(最大 129.3)* / prefill **152.70 tok/s**
+  - `decode_ja`: **110.50 tok/s** *(最大 112.5)* / prefill **181.30 tok/s**
+  - `prefill_mid` (4.2K): decode **101.60 tok/s** / prefill **1643.20 tok/s**
+  - `prefill_long` (13K): decode **101.90 tok/s** / prefill **3431.60 tok/s**
+  - `expert_cache_slots`: **4704 (8.97 GiB)**、Quality Gate: **PASS**
+- **17.6K 長文ストレステスト**: `STRESS_OK` (`prompt_n=16731`, `predicted_n=128`, `elapsed=5.97s`, `prefill=3536.10 tok/s`, `decode=106.60 tok/s`, VRAM 残り `89 MiB` / OOM なし)
+- **16問厳密品質評価 (`v0221_opt_qual`)**: **16/16 PASS (100.0%)**, `median_dec=151.15 tok/s`
+- **温度（`no_turbo=1` 維持）**: CPU `x86_pkg_temp=46.0°C`, GPU `51°C`
