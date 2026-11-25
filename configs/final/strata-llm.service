@@ -9,10 +9,10 @@ Environment=STRATA_ENGINE_BACKEND=cuda
 Environment=STRATA_NV_CHUNK=1
 Environment=STRATA_POOL_SPIN_US=2000
 Environment=STRATA_ADAPT_LAG=2
-Environment=STRATA_ADAPT_NOWAIT=1
 Environment=STRATA_CPU_IQ_ALL_EXACT1=1
 Environment=STRATA_ROUTE_TAIL_SKIP=7
 Environment=STRATA_CACHE_PIN_FRAC=0
+Environment=STRATA_GDN_SPLIT=1
 UMask=0077
 ExecStart=/home/shinsuke/.local/bin/strata serve --profile /home/shinsuke/strata-data/config/strata-ud-iq3_xxs.json --host 127.0.0.1 --port 18080
 Restart=no

@@ -24,14 +24,14 @@
     "auto",
     "--adapt-min-gain",
     "2.0",
+    "--pool-workers",
+    "23",
     "--spec",
-    "4",
+    "6",
     "--draft-conf",
     "0.7",
     "--vram-reserve-mib",
-    "96",
-    "--pool-workers",
-    "23"
+    "96"
   ],
   "cwd": "/home/shinsuke/strata-data/config",
   "tokenizer": "/home/shinsuke/strata-data/models/packs/ud-iq3_xxs-v31/tokenizer",
@@ -64,14 +64,14 @@
     "auto",
     "--adapt-min-gain",
     "2.0",
+    "--pool-workers",
+    "23",
     "--spec",
-    "4",
+    "6",
     "--draft-conf",
     "0.7",
     "--vram-reserve-mib",
-    "96",
-    "--pool-workers",
-    "23"
+    "96"
   ],
   "vision": {
     "exe": "/home/shinsuke/.local/share/strata/components/engine/0.1.64-linux-x86_64-cuda-cuda13/strata-vision",

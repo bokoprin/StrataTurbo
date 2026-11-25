@@ -1,0 +1,271 @@
+{
+  "tag": "p1_v18_nolfuse",
+  "timestamp": "2026-11-25T22:26:45+0900",
+  "n": 2,
+  "startup": {
+    "dflash2_max_window": 6,
+    "expert_cache_slots": 4704,
+    "expert_cache_gib": 8.97,
+    "pool_workers": 23,
+    "pool_cpus": "2,4,6,8,10,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,"
+  },
+  "gpu_before": {
+    "vram_used_mib": 15797.0,
+    "vram_free_mib": 147.0,
+    "gpu_temp_c": 33.0,
+    "power_w": 69.47,
+    "clock_gr_mhz": 2865.0,
+    "clock_mem_mhz": 10801.0
+  },
+  "gpu_after": {
+    "vram_used_mib": 15855.0,
+    "vram_free_mib": 89.0,
+    "gpu_temp_c": 49.0,
+    "power_w": 124.62,
+    "clock_gr_mhz": 2835.0,
+    "clock_mem_mhz": 10801.0
+  },
+  "summary": {
+    "decode_code": {
+      "prefill_tok_s_median": 152.05,
+      "decode_tok_s_median": 122.7,
+      "wall_s_median": 4.73,
+      "expert_hit_pct_median": 80.5,
+      "pcie_routed_pct_median": 1.0,
+      "draft_acc_pct_median": 87.2
+    },
+    "decode_ja": {
+      "prefill_tok_s_median": 178.7,
+      "decode_tok_s_median": 108.55,
+      "wall_s_median": 5.335,
+      "expert_hit_pct_median": 81.0,
+      "pcie_routed_pct_median": 0.85,
+      "draft_acc_pct_median": 76.62
+    },
+    "prefill_mid": {
+      "prefill_tok_s_median": 1633.25,
+      "decode_tok_s_median": 103.6,
+      "wall_s_median": 5.073,
+      "expert_hit_pct_median": 77.45,
+      "pcie_routed_pct_median": 1.0,
+      "draft_acc_pct_median": 82.71
+    },
+    "prefill_long": {
+      "prefill_tok_s_median": 3428.4,
+      "decode_tok_s_median": 100.8,
+      "wall_s_median": 4.463,
+      "expert_hit_pct_median": 74.4,
+      "pcie_routed_pct_median": 1.15,
+      "draft_acc_pct_median": 91.59
+    }
+  },
+  "quality": {
+    "all_pass": true,
+    "checks": [
+      {
+        "name": "json_math",
+        "pass": true,
+        "output": "{\"status\": \"ok\", \"sum\": 3973}"
+      },
+      {
+        "name": "ja_coherence",
+        "pass": true,
+        "output": "東京は人口約1,400万人の首都圏を形成する一方、大阪は約880万人の近畿圏の中核都市です。\n東京の人口規模は大阪の約1.6倍であり、日本最大級の都市圏を形成しています。"
+      }
+    ]
+  },
+  "raw": {
+    "decode_code": [
+      {
+        "wall_s": 4.85,
+        "prompt_n": 82,
+        "cache_n": 0,
+        "predicted_n": 512,
+        "prompt_ms": 551.8,
+        "predicted_ms": 4291.2,
+        "prefill_tok_s": 148.6,
+        "decode_tok_s": 119.3,
+        "draft_n": 356,
+        "draft_accepted": 304,
+        "draft_acc_pct": 85.39,
+        "finish_reason": "length",
+        "content_preview": "```cpp\n#pragma once\n\n#include <atomic>\n#include <cstddef>\n#include <memory>\n#include <optional>\n#include <type_traits>\n#",
+        "expert_hit_pct": 79.4,
+        "expert_hits": 192866,
+        "expert_lookups": 243018,
+        "pcie_extra": 2649,
+        "pcie_routed_pct": 1.1,
+        "total_routed": 245667,
+        "kv_vram_hit_pct": 99.69,
+        "kv_ram_read_mib": 7.2
+      },
+      {
+        "wall_s": 4.611,
+        "prompt_n": 85,
+        "cache_n": 0,
+        "predicted_n": 512,
+        "prompt_ms": 546.6,
+        "predicted_ms": 4059.1,
+        "prefill_tok_s": 155.5,
+        "decode_tok_s": 126.1,
+        "draft_n": 337,
+        "draft_accepted": 300,
+        "draft_acc_pct": 89.02,
+        "finish_reason": "length",
+        "content_preview": "```cpp\n#pragma once\n\n#include <atomic>\n#include <cstddef>\n#include <memory>\n#include <optional>\n#include <type_traits>\n#",
+        "expert_hit_pct": 81.6,
+        "expert_hits": 193846,
+        "expert_lookups": 237665,
+        "pcie_extra": 2102,
+        "pcie_routed_pct": 0.9,
+        "total_routed": 239767,
+        "kv_vram_hit_pct": 99.68,
+        "kv_ram_read_mib": 7.3
+      }
+    ],
+    "decode_ja": [
+      {
+        "wall_s": 5.324,
+        "prompt_n": 108,
+        "cache_n": 0,
+        "predicted_n": 512,
+        "prompt_ms": 618.9,
+        "predicted_ms": 4698.2,
+        "prefill_tok_s": 174.5,
+        "decode_tok_s": 109.0,
+        "draft_n": 339,
+        "draft_accepted": 268,
+        "draft_acc_pct": 79.06,
+        "finish_reason": "length",
+        "content_preview": "Mixture-of-Experts (MoE) モデルの推論において、GPU VRAM、PCIe バス、CPU メモリ（および場合によってはNVMe SSD）を組み合わせた「階層型メモリシステム」は、巨大なパラメータ数を扱うための必須アー",
+        "expert_hit_pct": 81.2,
+        "expert_hits": 204940,
+        "expert_lookups": 252449,
+        "pcie_extra": 2144,
+        "pcie_routed_pct": 0.8,
+        "total_routed": 254593,
+        "kv_vram_hit_pct": 99.71,
+        "kv_ram_read_mib": 7.5
+      },
+      {
+        "wall_s": 5.347,
+        "prompt_n": 111,
+        "cache_n": 0,
+        "predicted_n": 512,
+        "prompt_ms": 606.8,
+        "predicted_ms": 4734.5,
+        "prefill_tok_s": 182.9,
+        "decode_tok_s": 108.1,
+        "draft_n": 341,
+        "draft_accepted": 253,
+        "draft_acc_pct": 74.19,
+        "finish_reason": "length",
+        "content_preview": "Mixture-of-Experts (MoE) モデルの推論において、GPU VRAM、PCIe バス、CPU メモリ（および場合によってはNVMe SSD）を組み合わせた「階層型メモリシステム」は、巨大なパラメータ数を扱うための必須アー",
+        "expert_hit_pct": 80.8,
+        "expert_hits": 209628,
+        "expert_lookups": 259490,
+        "pcie_extra": 2233,
+        "pcie_routed_pct": 0.9,
+        "total_routed": 261723,
+        "kv_vram_hit_pct": 99.72,
+        "kv_ram_read_mib": 7.5
+      }
+    ],
+    "prefill_mid": [
+      {
+        "wall_s": 5.146,
+        "prompt_n": 4229,
+        "cache_n": 0,
+        "predicted_n": 256,
+        "prompt_ms": 2600.3,
+        "predicted_ms": 2535.6,
+        "prefill_tok_s": 1626.4,
+        "decode_tok_s": 101.0,
+        "draft_n": 159,
+        "draft_accepted": 130,
+        "draft_acc_pct": 81.76,
+        "finish_reason": "length",
+        "content_preview": "Based on a detailed review of the provided code blocks, it is important to first clarify a critical observation: **All 1",
+        "expert_hit_pct": 77.3,
+        "expert_hits": 94702,
+        "expert_lookups": 122515,
+        "pcie_extra": 1290,
+        "pcie_routed_pct": 1.0,
+        "total_routed": 123805,
+        "kv_vram_hit_pct": 99.26,
+        "kv_ram_read_mib": 53.7
+      },
+      {
+        "wall_s": 5.0,
+        "prompt_n": 4232,
+        "cache_n": 0,
+        "predicted_n": 256,
+        "prompt_ms": 2580.3,
+        "predicted_ms": 2410.2,
+        "prefill_tok_s": 1640.1,
+        "decode_tok_s": 106.2,
+        "draft_n": 159,
+        "draft_accepted": 133,
+        "draft_acc_pct": 83.65,
+        "finish_reason": "length",
+        "content_preview": "Based on a detailed review of the provided code blocks, it is important to clarify a critical finding first: **All 18 co",
+        "expert_hit_pct": 77.6,
+        "expert_hits": 94350,
+        "expert_lookups": 121534,
+        "pcie_extra": 1283,
+        "pcie_routed_pct": 1.0,
+        "total_routed": 122817,
+        "kv_vram_hit_pct": 99.25,
+        "kv_ram_read_mib": 53.7
+      }
+    ],
+    "prefill_long": [
+      {
+        "wall_s": 4.442,
+        "prompt_n": 13061,
+        "cache_n": 0,
+        "predicted_n": 64,
+        "prompt_ms": 3803.5,
+        "predicted_ms": 620.1,
+        "prefill_tok_s": 3433.9,
+        "decode_tok_s": 103.2,
+        "draft_n": 34,
+        "draft_accepted": 33,
+        "draft_acc_pct": 97.06,
+        "finish_reason": "length",
+        "content_preview": "TARGET_FOUND_OK\n\n**Bug in Block 42:**\nThe code in Block 42 is identical to all other blocks (0-51). There is no unique b",
+        "expert_hit_pct": 74.0,
+        "expert_hits": 20497,
+        "expert_lookups": 27682,
+        "pcie_extra": 318,
+        "pcie_routed_pct": 1.1,
+        "total_routed": 28000,
+        "kv_vram_hit_pct": 95.66,
+        "kv_ram_read_mib": 76.5
+      },
+      {
+        "wall_s": 4.483,
+        "prompt_n": 13064,
+        "cache_n": 0,
+        "predicted_n": 64,
+        "prompt_ms": 3816.6,
+        "predicted_ms": 650.2,
+        "prefill_tok_s": 3422.9,
+        "decode_tok_s": 98.4,
+        "draft_n": 36,
+        "draft_accepted": 31,
+        "draft_acc_pct": 86.11,
+        "finish_reason": "length",
+        "content_preview": "TARGET_FOUND_OK\n\n**Bug in Block 42:**\nThe code provided in Block 42 is identical to the other blocks and does not contai",
+        "expert_hit_pct": 74.8,
+        "expert_hits": 22075,
+        "expert_lookups": 29515,
+        "pcie_extra": 357,
+        "pcie_routed_pct": 1.2,
+        "total_routed": 29872,
+        "kv_vram_hit_pct": 95.9,
+        "kv_ram_read_mib": 76.3
+      }
+    ]
+  }
+}
