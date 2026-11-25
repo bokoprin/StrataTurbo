@@ -1,0 +1,44 @@
+diff --git a/engine/src/kernels/cpu/pool.cpp b/engine/src/kernels/cpu/pool.cpp
+index 2e79d1b13..8f9cd31b7 100644
+--- a/engine/src/kernels/cpu/pool.cpp
++++ b/engine/src/kernels/cpu/pool.cpp
+@@ -1418,7 +1418,18 @@ void ExpertPool::dep_task(int i) {
+     if (i < ngu) {
+         const int e = i / dep_k_gu_, p = i % dep_k_gu_;
+         const int h = (int) f.n_ff;
+-        const int r0 = (int) ((int64_t) h * p / dep_k_gu_), r1 = (int) ((int64_t) h * (p + 1) / dep_k_gu_);
++        static const bool turbo_guided = [] { const char* v = std::getenv("STRATA_TURBO_GUIDED"); return v && v[0] == '1'; }();
++        int r0, r1;
++        if (turbo_guided && dep_k_gu_ > 1) {
++            const int64_t K = dep_k_gu_, W = K * (K + 1) / 2;
++            const int64_t s0 = (int64_t) p * (2 * K - p + 1) / 2;
++            const int64_t s1 = (int64_t) (p + 1) * (2 * K - p) / 2;
++            r0 = (int) ((int64_t) h * s0 / W);
++            r1 = (int) ((int64_t) h * s1 / W);
++        } else {
++            r0 = (int) ((int64_t) h * p / dep_k_gu_);
++            r1 = (int) ((int64_t) h * (p + 1) / dep_k_gu_);
++        }
+         SplitBufMulti& sb = split_multi_[(size_t) e];
+         const NativeFmt* const nfmt = mjobs_[e].fmt != nullptr ? mjobs_[e].fmt : nfmt_;
+         float* ff[MAXT];
+@@ -1443,7 +1454,18 @@ void ExpertPool::dep_task(int i) {
+         while (d.quant.load(std::memory_order_acquire) != 2) strata_cpu_pause();
+     }
+     const int h = (int) f.n_embd;
+-    const int r0 = (int) ((int64_t) h * p / dep_k_dn_), r1 = (int) ((int64_t) h * (p + 1) / dep_k_dn_);
++    static const bool turbo_guided_dn = [] { const char* v = std::getenv("STRATA_TURBO_GUIDED"); return v && v[0] == '1'; }();
++    int r0, r1;
++    if (turbo_guided_dn && dep_k_dn_ > 1) {
++        const int64_t K = dep_k_dn_, W = K * (K + 1) / 2;
++        const int64_t s0 = (int64_t) p * (2 * K - p + 1) / 2;
++        const int64_t s1 = (int64_t) (p + 1) * (2 * K - p) / 2;
++        r0 = (int) ((int64_t) h * s0 / W);
++        r1 = (int) ((int64_t) h * s1 / W);
++    } else {
++        r0 = (int) ((int64_t) h * p / dep_k_dn_);
++        r1 = (int) ((int64_t) h * (p + 1) / dep_k_dn_);
++    }
+     const NativeFmt* const nfmt = mjobs_[e].fmt != nullptr ? mjobs_[e].fmt : nfmt_;
+     const void* hq[MAXT];
+     for (int t = 0; t < mjobs_[e].nt; ++t) hq[t] = sb.hq[t];

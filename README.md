@@ -19,8 +19,8 @@ NVIDIA GeForce **RTX 4080 16GB (`sm_89`)** + **Intel Core i9-14900KF**（`no_tur
 
 詳細な測定データ・各施策の A/B 比較表は [docs/report.md](docs/report.md) を参照してください。
 
-> **Strata v0.2.21 最新最適構成 (`v0221_p1_best`, `--spec 6 --draft-conf 0.7` + `STRATA_GDN_SPLIT=1` + `STRATA_ADAPT_NOWAIT` 削除 + `--vram-reserve-mib 96` + `STRATA_CACHE_PIN_FRAC=0`)**:
-> `decode_code` **138.20 tok/s** *(最大 143.3)*, `decode_ja` **109.80 tok/s** *(最大 114.8)*, `prefill_mid` **103.70 / 1643.00 tok/s**, `prefill_long` **98.30 / 3431.70 tok/s**, Expert Cache **4,703 slots (8.96 GiB)**, 17.6K ストレス **PASS** (`prefill=3592.80 tok/s`), 16問品質テスト **15/16 PASS** (`median_dec=151.6 tok/s`, 最大 182.5)。詳細は [docs/phase0_1_report.md](docs/phase0_1_report.md) を参照。
+> **Strata v0.2.21 最終最適構成 (`v0221_final_turbo`, Phase 1 + Phase 2 `STRATA_TURBO_GUIDED=1` P/E Guided パッチ)**:
+> 16問厳密品質テスト **16/16 PASS (`median_dec=160.65 tok/s`, 最大 183.5)**, 17.6K ストレス **PASS (`prefill=3593.80 tok/s`)**, `decode_code` **130.00 tok/s**, `decode_ja` **109.50 tok/s**, `prefill_mid` **102.30 / 1641.30 tok/s**, `prefill_long` **99.60 / 3426.30 tok/s** (温間 110.1), CPU **45.0℃** / GPU **52℃**。詳細は [docs/phase2_5_report.md](docs/phase2_5_report.md) を参照。
 
 ---
 
